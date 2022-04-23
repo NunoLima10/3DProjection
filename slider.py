@@ -3,8 +3,10 @@ import pygame
 from pygame.constants import MOUSEBUTTONDOWN,MOUSEBUTTONUP
 
 class Slider:
-    def __init__(self, position:tuple, size:tuple, color:tuple, start_position:float, label:str) -> None:
+    def __init__(self, surface:pygame.Surface, position:tuple, size:tuple, color:tuple, start_position:float, label:str) -> None:
       super().__init__()
+
+      self.surface = surface
 
       #out_line
       self.out_line_position = position 
@@ -58,29 +60,29 @@ class Slider:
             self.fill_size = (-self.out_line_position[0] + self.swiper_position[0], self.out_line_size[1])
             self.fill_rect = (self.fill_position, self.fill_size) 
 
-    def draw_label(self, surface) -> None:
+    def draw_label(self) -> None:
         text_font = pygame.font.SysFont(self.font, self. font_size)
         text = text_font.render(self.label + f"{self.swiper_percentage}" ,1, self.font_color)
         text_rect = text.get_rect()
         text_rect.topleft = (self.out_line_position[0] + self.out_line_size[0] + 15, self.out_line_position[1] - self.font_size / 2)
-        surface.blit(text,text_rect)
+        self.surface.blit(text,text_rect)
 
-    def draw(self,surface) -> None:
+    def draw(self) -> None:
       self.swiper_color = (0,255,0) if self.over else (255,255,255)
 
-      if self.label_is_visibel: self.draw_label(surface)
+      if self.label_is_visibel: self.draw_label()
       radius = self.swiper_radis + 2 if self.on_focus  else self.swiper_radis 
 
-      pygame.draw.rect(surface, self.out_line_color, self.out_line_rect, 1, 3)
-      pygame.draw.rect(surface, self.fill_color,self.fill_rect , 0, 3)
-      pygame.draw.circle(surface, self.swiper_color, self.swiper_position, radius)
+      pygame.draw.rect(self.surface, self.out_line_color, self.out_line_rect, 1, 3)
+      pygame.draw.rect(self.surface, self.fill_color,self.fill_rect , 0, 3)
+      pygame.draw.circle(self.surface, self.swiper_color, self.swiper_position, radius)
 
     def get_swiper_percentage(self) -> float:
       return self.swiper_percentage  
 
-    def update(self,surface, mouse_position) -> None:
+    def update(self, mouse_position) -> None:
      self.set_swiper_position(mouse_position)
-     self.draw(surface)
+     self.draw()
      self.is_on_focus(mouse_position)
      self.swiper_percentage = (self.swiper_position [0] - self.out_line_position[0] - self.out_line_size[0]  / self.out_line_size[0] ) / self.out_line_size[0] 
      self.swiper_percentage = 1 if self.swiper_percentage > 0.940 else  self.swiper_percentage

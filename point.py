@@ -1,6 +1,7 @@
 
 import pygame
 
+
 class Point:
     def __init__(self,surface: pygame.Surface, position: tuple, color: tuple, radius: int) -> None:
         super().__init__()
@@ -41,7 +42,26 @@ class Point:
 
         self.on_focus = self.radius > (deltaX + deltaY) ** 0.5
 
-    def update(self, mouse_position,show_dots):
-        if show_dots:pygame.draw.circle(self.surface, self.color,(self.position), self.radius)
+    def mouse_trigger(self, event) -> None:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.on_focus : self.toggle_over_state()
+        
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                if self.on_focus : self.toggle_over_state()
+
+    def update_state(self, mouse_position)-> None:
+        if self.on_focus and not self.over:
+            self.set_seleced_color()    
+        elif self.over:
+            self.set_over_color()
+            self.set_position(mouse_position)
+        else:
+            self.set_defaut_color() 
+        
+
+    def update(self, mouse_position, show_dots = True):
+        if show_dots: pygame.draw.circle(self.surface, self.color,(self.position), self.radius)
         self.is_on_focus(mouse_position)
+        self.update_state(mouse_position)
+        
     
